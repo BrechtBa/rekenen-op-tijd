@@ -184,7 +184,7 @@ function ExerciseView(){
   }
 
   return (
-    <div>
+    <div style={{position:'relative'}}>
       <img src={scene} style={{width: '100%', left: '0px'}} />
       {renderSettings()}
       {renderExercise()}
@@ -228,33 +228,31 @@ function Settings(props) {
 
     <div style={{position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', background: 'rgb(255, 255, 255, 0.6)', padding: '50px'}}>
 
-      <div style={{margin: '10px'}}>
-        <div>
-          <div>
-            <label style={{fontSize: '20px', marginRight: '20px', width: '150px'}}>Tijd:</label>
+      <div>
+        <div style={{marginBottom: '10px'}}>
+          <div style={{marginBottom: '10px'}}>
+            <label style={{fontSize: '20px', marginRight: '20px', width: '100px', display: 'inline-block'}}>Tijd:</label>
             <input style={{width: '100px', fontSize: '20px'}} type="text" value={settings.timeout} onChange={handleTimeoutChange} />
+            <label style={{fontSize: '20px', marginLeft: '5px', display: 'inline-block'}}>s</label>
           </div>
-        </div>
-
-        <div>
-          <div>
-            <label style={{fontSize: '20px', marginRight: '20px', width: '150px'}}>Minimum:</label>
+          <div style={{marginBottom: '10px'}}>
+            <label style={{fontSize: '20px', marginRight: '20px', width: '100px', display: 'inline-block'}}>Minimum:</label>
             <input style={{width: '100px', fontSize: '20px'}} type="text" value={settings.min} onChange={handleMinChange} />
           </div>
-          <div>
-            <label style={{fontSize: '20px', marginRight: '20px', width: '150px'}}>Maximum:</label>
+          <div style={{marginBottom: '10px'}}>
+            <label style={{fontSize: '20px', marginRight: '20px', width: '100px', display: 'inline-block'}}>Maximum:</label>
             <input style={{width: '100px', fontSize: '20px'}} type="text" value={settings.max} onChange={handleMaxChange} />
           </div>
         </div>
 
-        <div>
+        <div style={{display: 'flex', flexDirection: 'row', marginBottom: '10px'}}>
           <div>
             <input type="checkbox" id="addition" name="addition" defaultChecked={settings.addition} onChange={handleCheckAddition} style={{width: '25px', height: '25px'}}/>
-            <label style={{fontSize: '30px', marginLeft: '20px'}}>+</label>
+            <label style={{fontSize: '30px', marginLeft: '10px', marginRight: '30px'}}>+</label>
           </div>
           <div>
             <input type="checkbox" id="subtraction" name="subtraction" defaultChecked={settings.subtraction} onChange={handleCheckSubtraction} style={{width: '25px', height: '25px'}}/>
-            <label style={{fontSize: '30px', marginLeft: '20px'}}>-</label>
+            <label style={{fontSize: '30px', marginLeft: '10px', marginRight: '30px'}}>-</label>
           </div>
         </div>
       </div>
@@ -282,44 +280,46 @@ function Respawn(props) {
   }
 
   return (
-    <div style={{position: 'absolute', top: '0px', width: '100%', height: '100%', background: 'rgb(50, 0, 0, 0.4)', display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-      <div>
+    <div style={{position: 'absolute', top: '0px', width: '100%', height: '100%', background: 'rgb(50, 0, 0, 0.4)', display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column'}}>
+      <div style={{display: 'flex', justifyContent: 'center', flexDirection: 'column', height: '60%', maxHeight: '300px', marginBottom: '50px'}}>
 
-        <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'center', marginBottom: '60px'}}>
+        <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'center', flexGrow: 4}}>
           <div style={{fontSize: '80px', color: '#ffffff', textShadow: '6px 6px rgb(0, 0, 0, 0.8)'}}>You died!</div>
         </div>
 
-        <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'center', marginBottom: '10px'}}>
+        <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'center', }}>
           <div style={{fontSize: '40px', color: '#ffffff', textShadow: '3px 3px rgb(0, 0, 0, 0.8)'}}>
             Score: <span style={{fontSize: '40px', color: '#fdff54'}}>{score}</span>
           </div>
         </div>
 
-        <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'center', marginBottom: '10px'}}>
+        <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'center'}}>
           <div style={{height: '40px'}}>
             <Achievements score={score} />
           </div>
         </div>
 
-        <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'center', marginBottom: '10px'}}>
+        <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'center'}}>
           <div style={{fontSize: '30px', color: '#ffffff', textShadow: '3px 3px rgb(0, 0, 0, 0.8)'}}>
             {formatExercise(exercise)}
           </div>
         </div>
 
-        <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'center', marginBottom: '50px'}}>
+        <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'center'}}>
           <div style={{fontSize: '20px', color: '#ffffff', textShadow: '3px 3px rgb(0, 0, 0, 0.8)'}}>
             <span style={{color: '#fdff54'}}>{Math.round(statistics.velocity*10)/10}</span> juiste antwoorden per minuut.
           </div>
         </div>
+      </div>
 
+      <div>
         <div>
-          <button type="button" style={{width: '500px', height: '50px', fontSize: '30px', background: '#737373', marginTop: '20px'}} onClick={(e) => handleStart()}>
+          <button type="button" style={{width: '500px', height: '50px', fontSize: '30px', background: '#737373', marginBottom: '20px'}} onClick={(e) => handleStart()}>
             <span style={{color: '#eeeeee', textShadow: '3px 3px rgb(0, 0, 0, 0.8)'}}>Respawn</span>
           </button>
         </div>
         <div>
-          <button type="button" style={{width: '500px', height: '50px', fontSize: '30px', background: '#737373', marginTop: '20px'}} onClick={(e) => handleSettings()}>
+          <button type="button" style={{width: '500px', height: '50px', fontSize: '30px', background: '#737373', marginBottom: '20px'}} onClick={(e) => handleSettings()}>
             <span style={{color: '#eeeeee', textShadow: '3px 3px rgb(0, 0, 0, 0.8)'}}>Title screen</span>
           </button>
         </div>
