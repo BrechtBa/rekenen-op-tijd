@@ -168,9 +168,7 @@ function ExerciseView(){
     if(view === 'exercise') {
       return (
         <div>
-          <Exercise exercise={exercise} handleAnswer={handleAnswer}/>
-          <Timer/>
-          <Score score={score}/>
+          <Exercise exercise={exercise} handleAnswer={handleAnswer} score={score}/>
         </div>
       );
     }
@@ -185,7 +183,7 @@ function ExerciseView(){
 
   return (
     <div style={{position:'relative'}}>
-      <img src={scene} style={{width: '100%', left: '0px'}} />
+      <img src={scene} className="scene"/>
       {renderSettings()}
       {renderExercise()}
       {renderRespawn()}
@@ -226,7 +224,7 @@ function Settings(props) {
 
   return (
 
-    <div style={{position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', background: 'rgb(255, 255, 255, 0.6)', padding: '50px'}}>
+    <div className="settings">
 
       <div>
         <div style={{marginBottom: '10px'}}>
@@ -257,7 +255,7 @@ function Settings(props) {
         </div>
       </div>
 
-      <button type="button" style={{width: '500px', height: '50px', fontSize: '30px', background: '#737373', marginTop: '20px'}} onClick={(e) => handleStart()}>
+      <button type="button" className="button" onClick={(e) => handleStart()}>
         <span style={{color: '#eeeeee', textShadow: '3px 3px rgb(0, 0, 0, 0.8)'}}>START</span>
       </button>
     </div>
@@ -280,16 +278,16 @@ function Respawn(props) {
   }
 
   return (
-    <div style={{position: 'absolute', top: '0px', width: '100%', height: '100%', background: 'rgb(50, 0, 0, 0.4)', display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column'}}>
-      <div style={{display: 'flex', justifyContent: 'center', flexDirection: 'column', height: '60%', maxHeight: '300px', marginBottom: '50px'}}>
+    <div className="respawn">
+      <div className="stats">
 
-        <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'center', flexGrow: 4}}>
-          <div style={{fontSize: '80px', color: '#ffffff', textShadow: '6px 6px rgb(0, 0, 0, 0.8)'}}>You died!</div>
+        <div className="title" style={{display: 'flex', flexDirection: 'row', justifyContent: 'center', flexGrow: 4}}>
+          <div>You died!</div>
         </div>
 
-        <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'center', }}>
-          <div style={{fontSize: '40px', color: '#ffffff', textShadow: '3px 3px rgb(0, 0, 0, 0.8)'}}>
-            Score: <span style={{fontSize: '40px', color: '#fdff54'}}>{score}</span>
+        <div className="score" style={{display: 'flex', flexDirection: 'row', justifyContent: 'center', }}>
+          <div>
+            Score: <span className="value">{score}</span>
           </div>
         </div>
 
@@ -314,12 +312,12 @@ function Respawn(props) {
 
       <div>
         <div>
-          <button type="button" style={{width: '500px', height: '50px', fontSize: '30px', background: '#737373', marginBottom: '20px'}} onClick={(e) => handleStart()}>
+          <button type="button" className="button" onClick={(e) => handleStart()}>
             <span style={{color: '#eeeeee', textShadow: '3px 3px rgb(0, 0, 0, 0.8)'}}>Respawn</span>
           </button>
         </div>
         <div>
-          <button type="button" style={{width: '500px', height: '50px', fontSize: '30px', background: '#737373', marginBottom: '20px'}} onClick={(e) => handleSettings()}>
+          <button type="button" className="button" onClick={(e) => handleSettings()}>
             <span style={{color: '#eeeeee', textShadow: '3px 3px rgb(0, 0, 0, 0.8)'}}>Title screen</span>
           </button>
         </div>
@@ -331,7 +329,8 @@ function Respawn(props) {
 
 
 function Exercise(props) {
-  const exercise = props.exercise
+  const exercise = props.exercise;
+  const score = props.score;
   const handleAnswer = props.handleAnswer;
 
   const [answer, setAnswer] = useState('');
@@ -357,13 +356,15 @@ function Exercise(props) {
   }
 
   return (
-    <div>
-      <div style={{position: 'absolute', top: '42%', left: '50%', transform: 'translate(-40%, -50%)', fontSize: '60px', fontFamily: 'sans-serif'}}>
+    <div className="exercise">
+      <div className="formula">
         {formatExercise(exercise)}
       </div>
-      <input ref={inputRef} style={{position: 'absolute', top: '65%', left: '55%', width: '200px', height: '100px', background: 'rgb(255, 255, 255, 0.6)', fontSize: '60px', textAlign: 'center'}} type="number" value={answer}
+      <input ref={inputRef} className="answer" type="number" value={answer}
         onChange={(e) => setAnswer(e.target.value)}
         onKeyDown={handleKeyDown}/>
+      <Score score={score}/>
+      <Timer/>
     </div>
   )
 }
@@ -403,12 +404,12 @@ function Score(props){
   const score = props.score;
 
   return (
-    <div style={{position: 'absolute', right: '20%', top: '60px', background: 'rgb(255, 255, 255, 0.3)', padding: '10px'}}>
+    <div className="score">
       <div style={{display: 'flex'}}>
-        <div style={{width: '100px', fontSize: '30px'}}>Score: </div>
-        <div style={{width: '100px', fontSize: '40px', textAlign: 'right'}}>{score}</div>
+        <div className="label">Score: </div>
+        <div className="value">{score}</div>
       </div>
-      <div style={{height: '38px'}}>
+      <div className="achievements">
         <Achievements score={score} />
       </div>
     </div>
