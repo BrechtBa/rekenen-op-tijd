@@ -339,6 +339,7 @@ function Exercise(props) {
 
   useEffect(() => {
     inputRef.current.focus();
+    inputRef.current.click();
   });
 
   const handleKeyDown = (e) => {
