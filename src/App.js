@@ -28,6 +28,25 @@ function getSubtraction(settings) {
   return {a: a, b: b, operator: '-', answer: answer}
 }
 
+function getMultiplication(settings) {
+  const min = settings.min;
+  const max = settings.max;
+
+  const a = getRandomInt(min, max);
+  const b = getRandomInt(min, max);
+  const answer = a * b;
+  return {a: a, b: b, operator: 'x', answer: answer}
+}
+
+function getDivision(settings) {
+  const min = settings.min;
+  const max = settings.max;
+
+  const b = getRandomInt(min, max);
+  const answer = getRandomInt(min, max);
+  const a = answer * b;
+  return {a: a, b: b, operator: ':', answer: answer}
+}
 
 
 function getExercise(settings) {
@@ -38,11 +57,18 @@ function getExercise(settings) {
   if(settings.subtraction){
     operators.push(getSubtraction)
   }
+  if(settings.multiplication){
+    operators.push(getMultiplication)
+  }
+  if(settings.division){
+    operators.push(getDivision)
+  }
   const index = getRandomInt(0, operators.length-1)
   const getter = operators[index]
 
   return getter(settings)
 }
+
 
 function App() {
 
@@ -199,12 +225,19 @@ function Settings(props) {
   const handleStart = props.handleStart;
 
   const handleCheckAddition = () => {
-    settings.addition = !settings.addition
-    setSettings(settings)
+    const tempSettings = JSON.parse(JSON.stringify(settings))
+    tempSettings.addition = !tempSettings.addition
+    setSettings(tempSettings)
   }
   const handleCheckSubtraction = () => {
-    settings.subtraction = !settings.subtraction
-    setSettings(settings)
+    const tempSettings = JSON.parse(JSON.stringify(settings))
+    tempSettings.subtraction = !tempSettings.subtraction
+    setSettings(tempSettings)
+  }
+  const handleCheckMultiplication = () => {
+    const tempSettings = JSON.parse(JSON.stringify(settings))
+    tempSettings.multiplication = !tempSettings.multiplication
+    setSettings(tempSettings)
   }
   const handleMinChange = (e) => {
     const tempSettings = JSON.parse(JSON.stringify(settings))
@@ -251,6 +284,10 @@ function Settings(props) {
           <div>
             <input type="checkbox" id="subtraction" name="subtraction" defaultChecked={settings.subtraction} onChange={handleCheckSubtraction} style={{width: '25px', height: '25px'}}/>
             <label style={{fontSize: '30px', marginLeft: '10px', marginRight: '30px'}}>-</label>
+          </div>
+          <div>
+            <input type="checkbox" id="multiplication" name="multiplication" defaultChecked={settings.subtraction} onChange={handleCheckMultiplication} style={{width: '25px', height: '25px'}}/>
+            <label style={{fontSize: '30px', marginLeft: '10px', marginRight: '30px'}}>x</label>
           </div>
         </div>
       </div>
