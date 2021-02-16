@@ -8,10 +8,10 @@ function getRandomInt(min, max) {
 
 
 function getAddition(settings) {
-  const min = settings.min;
-  const max = settings.max;
+  const min = parseInt(settings.min);
+  const max = parseInt(settings.max);
 
-  const answer = getRandomInt(min, max);
+  const answer = getRandomInt(min + 1, max);
   const a = getRandomInt(0, answer);
   const b = answer - a;
   return {a: a, b: b, operator: '+', answer: answer}
@@ -19,8 +19,8 @@ function getAddition(settings) {
 
 
 function getSubtraction(settings) {
-  const min = settings.min;
-  const max = settings.max;
+  const min = parseInt(settings.min);
+  const max = parseInt(settings.max);
 
   const answer = getRandomInt(min, max);
   const a = getRandomInt(answer, max);
@@ -29,8 +29,8 @@ function getSubtraction(settings) {
 }
 
 function getMultiplication(settings) {
-  const min = settings.min;
-  const max = settings.max;
+  const min = parseInt(settings.min);
+  const max = parseInt(settings.max);
 
   const a = getRandomInt(min, max);
   const b = getRandomInt(min, max);
@@ -39,10 +39,13 @@ function getMultiplication(settings) {
 }
 
 function getDivision(settings) {
-  const min = settings.min;
-  const max = settings.max;
+  const min = parseInt(settings.min);
+  const max = parseInt(settings.max);
 
-  const b = getRandomInt(min, max);
+  let b = getRandomInt(min, max);
+  if(b == 0){
+    b = 1;
+  }
   const answer = getRandomInt(min, max);
   const a = answer * b;
   return {a: a, b: b, operator: ':', answer: answer}
@@ -74,8 +77,6 @@ function App() {
 
   return (
     <div className="App">
-
-
       <ExerciseView />
     </div>
   );
@@ -87,7 +88,7 @@ const explosionSound = new Audio('explosion.mp3')
 
 function ExerciseView(){
 
-  const [settings, setSettings] = useState({min: 0, max: 10, addition: true, subtraction: true, multiplication: false, timeout: 6});
+  const [settings, setSettings] = useState({min: 0, max: 10, addition: true, subtraction: true, multiplication: false, division: false, timeout: 6});
   const [audio, setAudio] = useState(true);
   const [score, setScore] = useState(0);
   const [exercise, setExercise] = useState(null);
@@ -126,6 +127,7 @@ function ExerciseView(){
   const handleAnswer = (exercise, answer) => {
     // stop the timer
     stopTimer()
+
     // check the answer
     if(answer == exercise.answer){
       handleCorrectAnswer()
@@ -194,7 +196,7 @@ function ExerciseView(){
     if(view === 'exercise') {
       return (
         <div>
-          <Exercise exercise={exercise} handleAnswer={handleAnswer} score={score}/>
+          <Exercise exercise={exercise} handleAnswer={handleAnswer} score={score} voice={settings.voice}/>
         </div>
       );
     }
@@ -224,6 +226,12 @@ function Settings(props) {
 
   const handleStart = props.handleStart;
 
+  const handleCheckVoice = () => {
+    const tempSettings = JSON.parse(JSON.stringify(settings))
+    tempSettings.voice = !tempSettings.voice
+    setSettings(tempSettings)
+  }
+
   const handleCheckAddition = () => {
     const tempSettings = JSON.parse(JSON.stringify(settings))
     tempSettings.addition = !tempSettings.addition
@@ -241,24 +249,23 @@ function Settings(props) {
   }
   const handleMinChange = (e) => {
     const tempSettings = JSON.parse(JSON.stringify(settings))
-    tempSettings.min = parseInt(e.target.value);
+    tempSettings.min = e.target.value;
     setSettings(tempSettings)
   }
   const handleMaxChange = (e) => {
     const tempSettings = JSON.parse(JSON.stringify(settings))
-    tempSettings.max = parseInt(e.target.value);
+    tempSettings.max = e.target.value;
     setSettings(tempSettings)
   }
   const handleTimeoutChange = (e) => {
     const tempSettings = JSON.parse(JSON.stringify(settings))
-    tempSettings.timeout = parseFloat(e.target.value);
+    tempSettings.timeout = e.target.value;
     setSettings(tempSettings)
   }
 
   return (
 
     <div className="settings">
-
       <div>
         <div style={{marginBottom: '10px'}}>
           <div style={{marginBottom: '10px'}}>
@@ -286,10 +293,11 @@ function Settings(props) {
             <label style={{fontSize: '30px', marginLeft: '10px', marginRight: '30px'}}>-</label>
           </div>
           <div>
-            <input type="checkbox" id="multiplication" name="multiplication" defaultChecked={settings.subtraction} onChange={handleCheckMultiplication} style={{width: '25px', height: '25px'}}/>
+            <input type="checkbox" id="multiplication" name="multiplication" defaultChecked={settings.multiplication} onChange={handleCheckMultiplication} style={{width: '25px', height: '25px'}}/>
             <label style={{fontSize: '30px', marginLeft: '10px', marginRight: '30px'}}>x</label>
           </div>
         </div>
+
       </div>
 
       <button type="button" className="button" onClick={(e) => handleStart()}>
@@ -306,10 +314,17 @@ function Respawn(props) {
   const score = props.score;
   const exercise = props.exercise;
   const statistics = props.statistics;
+  const answer = ''
 
-  const formatExercise = (exercise) => {
+  const formatExercise = (exercise, answer) => {
     if(exercise !== null){
-      return `${exercise.a} ${exercise.operator} ${exercise.b} = `
+      if(answer == '') {
+        return `${exercise.a} ${exercise.operator} ${exercise.b} = `
+      }
+      else {
+        return `${exercise.a} ${exercise.operator} ${exercise.b} != ${answer}`
+      }
+
     }
     return '';
   }
@@ -336,7 +351,7 @@ function Respawn(props) {
 
         <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'center'}}>
           <div style={{fontSize: '30px', color: '#ffffff', textShadow: '3px 3px rgb(0, 0, 0, 0.8)'}}>
-            {formatExercise(exercise)}
+            {formatExercise(exercise, answer)}
           </div>
         </div>
 
@@ -370,6 +385,7 @@ function Exercise(props) {
   const score = props.score;
   const handleAnswer = props.handleAnswer;
 
+  const voice = props.voice;
   const [answer, setAnswer] = useState('');
 
   const inputRef = useRef(null);
@@ -481,5 +497,6 @@ function Achievements(props) {
     </div>
   )
 }
+
 
 export default App;
