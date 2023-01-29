@@ -2,8 +2,22 @@ import './App.css';
 import React, { useState, useEffect, useRef } from "react";
 
 
-function getRandomInt(min, max) {
-  return min + Math.floor(Math.random() * Math.floor(max-min+1));
+function getRandomInt(min, max, reduceLowNumberProbability) {
+
+  if(reduceLowNumberProbability === undefined){
+    reduceLowNumberProbability = true;
+  }
+  
+  let newMin = min;
+  if(reduceLowNumberProbability && Math.random() > 0.2){
+    newMin = Math.max(min, Math.min(2, max)); 
+  }
+  return newMin + Math.floor(Math.random() * Math.floor(max-newMin+1));
+}
+
+
+for(let i=0; i<100; i++){
+  getRandomInt(0, 5);
 }
 
 
@@ -32,7 +46,7 @@ function getMultiplication(settings) {
   const min = parseInt(settings.min);
   const max = parseInt(settings.max);
 
-  const a = getRandomInt(min, max);
+  const a = getRandomInt(0, Math.max(10, max));
   const b = getRandomInt(min, max);
   const answer = a * b;
   return {a: a, b: b, operator: 'x', answer: answer}
@@ -46,7 +60,7 @@ function getDivision(settings) {
   if(b == 0){
     b = 1;
   }
-  const answer = getRandomInt(min, max);
+  const answer = getRandomInt(0, Math.max(10, max));
   const a = answer * b;
   return {a: a, b: b, operator: ':', answer: answer}
 }
@@ -92,6 +106,8 @@ function ExerciseView(){
   const [audio, setAudio] = useState(true);
   const [score, setScore] = useState(0);
   const [exercise, setExercise] = useState(null);
+  const [answer, setAnswer] = useState(null);
+  
   const [timeoutTimer, setTimeoutTimer] = useState(null);
   const [scene, setScene] = useState('scene.png');
   const [startLabel, setStartLabel] = useState('START');
@@ -126,14 +142,15 @@ function ExerciseView(){
 
   const handleAnswer = (exercise, answer) => {
     // stop the timer
-    stopTimer()
-
+    stopTimer();
+    setAnswer(answer);
+    
     // check the answer
     if(answer == exercise.answer){
-      handleCorrectAnswer()
+      handleCorrectAnswer();
     }
     else{
-      handleWrongAnswer()
+      handleWrongAnswer();
     }
   }
 
@@ -204,7 +221,7 @@ function ExerciseView(){
   const renderRespawn = () => {
     if(view === 'respawn') {
       return (
-        <Respawn handleStart={handleStart} handleSettings={handleSettings} exercise={exercise} statistics={statistics} score={score}/>
+        <Respawn handleStart={handleStart} handleSettings={handleSettings} exercise={exercise} answer={answer} statistics={statistics} score={score}/>
       )
     }
   }
@@ -247,6 +264,11 @@ function Settings(props) {
     tempSettings.multiplication = !tempSettings.multiplication
     setSettings(tempSettings)
   }
+  const handleCheckDivision = () => {
+    const tempSettings = JSON.parse(JSON.stringify(settings))
+    tempSettings.division = !tempSettings.division
+    setSettings(tempSettings)
+  }
   const handleMinChange = (e) => {
     const tempSettings = JSON.parse(JSON.stringify(settings))
     tempSettings.min = e.target.value;
@@ -261,6 +283,12 @@ function Settings(props) {
     const tempSettings = JSON.parse(JSON.stringify(settings))
     tempSettings.timeout = e.target.value;
     setSettings(tempSettings)
+  }
+  
+  const start = () => {
+    if(settings.addition || settings.subtraction || settings.multiplication || settings.division){
+      handleStart();
+    }
   }
 
   return (
@@ -296,11 +324,15 @@ function Settings(props) {
             <input type="checkbox" id="multiplication" name="multiplication" defaultChecked={settings.multiplication} onChange={handleCheckMultiplication} style={{width: '25px', height: '25px'}}/>
             <label style={{fontSize: '30px', marginLeft: '10px', marginRight: '30px'}}>x</label>
           </div>
+          <div>
+            <input type="checkbox" id="division" name="multiplication" defaultChecked={settings.division} onChange={handleCheckDivision} style={{width: '25px', height: '25px'}}/>
+            <label style={{fontSize: '30px', marginLeft: '10px', marginRight: '30px'}}>:</label>
+          </div>
         </div>
 
       </div>
 
-      <button type="button" className="button" onClick={(e) => handleStart()}>
+      <button type="button" className="button" onClick={(e) => start()}>
         <span style={{color: '#eeeeee', textShadow: '3px 3px rgb(0, 0, 0, 0.8)'}}>START</span>
       </button>
     </div>
@@ -314,7 +346,7 @@ function Respawn(props) {
   const score = props.score;
   const exercise = props.exercise;
   const statistics = props.statistics;
-  const answer = ''
+  const answer = isNaN(props.answer) ? '' : props.answer;
 
   const formatExercise = (exercise, answer) => {
     if(exercise !== null){
@@ -486,7 +518,7 @@ function Achievements(props) {
     score: 20
   }]
   const achievements = availableAchievements.filter(x => score >= x.score)
-  console.log(achievements)
+  
   return (
     <div style={{height: '100%'}}>
       {
